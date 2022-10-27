@@ -17,7 +17,6 @@ from icalendar import Calendar, Event
 import os
 import argparse
 from selenium import webdriver
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 
@@ -63,7 +62,6 @@ def main():
     driver.get('https://esaip.alcuin.com/OpDotnet/commun/Login/aspxtoasp.aspx?url=/Eplug/Agenda/Agenda.asp?IdApplication=190&TypeAcces=Utilisateur&IdLien=5834&groupe=2483')
     print(verbose.EXTRACTIONDESJOURS)
     #For each day we want to extract
-
     for delta in range(args.days):
         #Taking into account the offset if there is one to set the strarting date
         datefrom = datetime.datetime.today() + datetime.timedelta(args.date)
@@ -223,6 +221,26 @@ def build_event(d, time, salle, course_name, course_description, promo):
     #Append the event to the file thanks to the calendar variable converting the infos in the event variable to the right format
     f.write(cal.to_ical())
     f.close()
+#Fonction that parse the xml output of this url : https://esaip.alcuin.com/OpDotNet/Eplug/Agenda/Application/ListeCal.aspx wich is the list of calendars, using beautifulsoup
+def parse_calendars():
+    #Get the page that is responsible for the list of calendars
+    driver.get('https://esaip.alcuin.com/OpDotNet/Eplug/Agenda/Application/ListeCal.aspx')
+    r = driver.page_source
+    #Look for the arguments of the fonction call MajDivCal wich contains the list of calendars
+    xml_cal = re.search("(?<=parent.MajDivCal\(')(.*\>)", r)
+    soup = BeautifulSoup(xml_cal[0], 'lxml')
+    #Get the list of calendars wich are on the td tag of the html code
+    calendars = soup.find_all('td')
+    #Create a list that will contain the names and ids of the calendars
+    cal_list_id = []
+    cal_list_name = []
+    #Go through the list of calendars and add the name and id of each calendar to the list
+    for cal in calendars:
+        print (cal)
+        if cal.get('style') in ('background:#FAFAFA;','background:#BEB4FF;'):
+            cal_list_id.append(re.search("[A-Z]{3,}\d{3,}", cal.get('onclick'))[0])
+            cal_list_name.append(cal.text.strip())
+    return(cal_list_id,cal_list_name)
 
 def usage():
     print(verbose.USAGE)
