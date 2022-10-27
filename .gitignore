@@ -1,0 +1,4 @@
+geckodriver.log
+secret.py
+__pycache__/
+PDFs-presence/*
