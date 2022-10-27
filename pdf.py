@@ -38,7 +38,7 @@ def main(date, horaire, cours, prof, dateweek, promo):
 
     #Write each infos to the right place in the PDF
     can.drawString(24 * mm, 177 * mm, date) #The date on the top left
-    can.drawString(108 * mm, 166 * mm, str(HD) + "H" + str(MD)) #The duration of the event in the middle
+    can.drawString(108 * mm, 166 * mm, str(HD) + "H" + str(MD[0])) #The duration of the event in the middle
     can.drawString(188 * mm, 180 * mm, H1 + "H" + M1)   #Start time
     can.drawString(182 * mm, 176 * mm, H2 + "H" + M2)   #End time
     can.setFont("Helvetica-Bold", 8)    #Set the font in bold for the course name
